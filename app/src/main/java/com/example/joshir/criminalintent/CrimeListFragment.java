@@ -5,6 +5,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.RecyclerView.ViewHolder;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,14 +38,14 @@ public class CrimeListFragment extends Fragment {
         mCrimeRecyclerView.setAdapter(mAdapter);
     }
 
-    private class CrimeHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    private class CrimeHolderRegular extends ViewHolder implements View.OnClickListener {
 
         private TextView mTitleTextView;
         private TextView mDateTextView;
 
         private Crime mCrime;
 
-        public CrimeHolder(LayoutInflater inflater, ViewGroup parent) {
+        public CrimeHolderRegular(LayoutInflater inflater, ViewGroup parent) {
             super(inflater.inflate(R.layout.list_item_crime,parent,false));
 
             mTitleTextView = (TextView) itemView.findViewById(R.id.crime_title);
@@ -65,26 +66,80 @@ public class CrimeListFragment extends Fragment {
         }
     }
 
+    private class CrimeHolderSerious extends ViewHolder implements View.OnClickListener{
 
-    private class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder>{
+        private TextView mTitleTextView;
+        private TextView mDateTextView;
+
+        private Crime mCrime;
+
+        public CrimeHolderSerious(LayoutInflater inflater, ViewGroup parent){
+            super(inflater.inflate(R.layout.list_item_crime_serious,parent,false));
+
+            mTitleTextView = (TextView) itemView.findViewById(R.id.crime_title);
+            mDateTextView = (TextView) itemView.findViewById(R.id.crime_date);
+
+            itemView.setOnClickListener(this);
+        }
+
+        public void bind (Crime crime){
+            mCrime = crime;
+            mTitleTextView.setText(mCrime.getTitle());
+            mDateTextView.setText(mCrime.getDate().toString());
+        }
+
+        @Override
+        public void onClick(View view){
+            Toast.makeText(getActivity(), mCrime.getTitle()+" Clicked!", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+
+    private class CrimeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
         private List<Crime> mCrimes;
 
         public CrimeAdapter(List<Crime> crimes) {
             mCrimes = crimes;
         }
 
-
         @Override
-        public CrimeHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-
-            return new CrimeHolder(layoutInflater, parent);
+        public int getItemViewType(int position) {
+            Crime crime = mCrimes.get(position);
+            if (crime.isRequiresPolice()){
+                return 2;
+            }else {
+                return 0;
+            }
         }
 
         @Override
-        public void onBindViewHolder(@NonNull CrimeHolder holder, int position) {
+        public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
+
+            if (viewType == 2) {
+                return new CrimeHolderSerious(layoutInflater, parent);
+            } else {
+                return new CrimeHolderRegular(layoutInflater, parent);
+            }
+        }
+
+
+
+        @Override
+        public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
             Crime crime = mCrimes.get(position);
-            holder.bind(crime);
+            switch (holder.getItemViewType()) {
+                case 0:
+                    CrimeHolderRegular crimeHolderRegular = (CrimeHolderRegular) holder;
+                    crimeHolderRegular.bind(crime);
+                    break;
+
+                case 2:
+                    CrimeHolderSerious crimeHolderSerious = (CrimeHolderSerious) holder;
+                    crimeHolderSerious.bind(crime);
+                    break;
+            }
 
         }
 
