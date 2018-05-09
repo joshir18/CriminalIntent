@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.DateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class CrimeListFragment extends Fragment {
@@ -60,7 +62,8 @@ public class CrimeListFragment extends Fragment {
         public void  bind (Crime crime){
             mCrime = crime;
             mTitleTextView.setText(mCrime.getTitle());
-            mDateTextView.setText(mCrime.getDate().toString());
+            Date mDate = mCrime.getDate();
+            mDateTextView.setText(DateFormat.getDateInstance(DateFormat.FULL).format(mDate));
             mSolvedImageView.setVisibility(crime.isSolved() ? View.VISIBLE : View.GONE);
         }
 
@@ -93,7 +96,8 @@ public class CrimeListFragment extends Fragment {
         public void bind (Crime crime){
             mCrime = crime;
             mTitleTextView.setText(mCrime.getTitle());
-            mDateTextView.setText(mCrime.getDate().toString());
+            Date mDate = mCrime.getDate();
+            mDateTextView.setText(DateFormat.getDateInstance(DateFormat.FULL).format(mDate));
             mSolvedImageView.setVisibility(crime.isSolved() ? View.VISIBLE : View.GONE);
         }
 
