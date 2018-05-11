@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.example.joshir.criminalintent.database.CrimeBaseHelper;
 import com.example.joshir.criminalintent.database.CrimeCursorWrapper;
-import com.example.joshir.criminalintent.database.CrimeDbSchema;
 import com.example.joshir.criminalintent.database.CrimeDbSchema.CrimeTable;
 
 import java.util.ArrayList;
@@ -42,6 +41,8 @@ public class CrimeLab {
     }
 
     public void deleteCrime (Crime c){
+        String uuidString = c.getId().toString();
+        mDatabase.delete(CrimeTable.NAME, CrimeTable.Cols.UUID + " = ?", new String[] { uuidString });
 
     }
 
